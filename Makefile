@@ -37,6 +37,8 @@ config:
 
 SYSTEM_PATH=$(prefix)/share/non-sequencer/
 DOCUMENT_PATH=$(prefix)/share/doc/non-sequencer/
+ICON_PATH=$(prefix)/share/pixmaps
+DESKTOP_PATH=$(prefix)/share/applications
 
 # a bit of a hack to make sure this runs before any rules
 ifneq ($(CALCULATING),yes)
@@ -114,6 +116,10 @@ install: all
 	@ install -m 644 instruments/* "$(DESTDIR)$(SYSTEM_PATH)/instruments"
 	@ install -d "$(DESTDIR)$(DOCUMENT_PATH)"
 	@ install -m 644 doc/*.html doc/*.png "$(DESTDIR)$(DOCUMENT_PATH)"
+	@ install -d "$(DESTDIR)$(ICON_PATH)"
+	@ install -m 644 ressources/desktop/non-sequencer.png "$(DESTDIR)$(ICON_PATH)"
+	@ install -d "$(DESTDIR)$(DESKTOP_PATH)"
+	@ install -m 644 ressources/desktop/non-sequencer.desktop "$(DESTDIR)$(DESKTOP_PATH)"
 	@ echo "$(DONE)"
 ifneq ($(USE_DEBUG),yes)
 	@ echo -n "Stripping..."
