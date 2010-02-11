@@ -1,5 +1,5 @@
 Source: non-sequencer
-Section: unknown
+Section: sound
 Priority: extra
 Maintainer: Julien Lta BALLET <elthariel@gmail.com>
 Build-Depends: debhelper (>= 7), libfltk1.1-dev, libsigc++-2.0-dev, libjack-dev, liblash-dev
@@ -8,7 +8,7 @@ Homepage: http://non-sequencer.tuxfamily.org/
 
 Package: non-sequencer
 Architecture: any
-Depends: libfltk1.1, libsigc++-2.0-0c2a, jackd, liblash2, lashd
+Depends: jackd, lashd, ${shlibs:Depends}
 Description: Non Sequencer is a real-time, pattern-based MIDI sequencer
  The Non Sequencer is a powerful real-time, pattern-based MIDI
  sequencer for Linux--released under the GPL. Filling the void left by
