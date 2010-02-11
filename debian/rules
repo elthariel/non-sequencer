@@ -24,7 +24,7 @@ endif
 
 .config: configure
 	dh_testdir
-	./configure $(CROSS) --prefix=/usr CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
+	./configure $(CROSS) --prefix=/usr CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs" --enable-debug=no --enable-lash=yes
 
 
 # ifneq "$(wildcard /usr/share/misc/config.sub)" ""
