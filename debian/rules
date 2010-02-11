@@ -22,48 +22,46 @@ endif
 
 
 
-config.status: configure
+.config: configure
 	dh_testdir
-	# Add here commands to configure the package.
-ifneq "$(wildcard /usr/share/misc/config.sub)" ""
-	cp -f /usr/share/misc/config.sub config.sub
-endif
-ifneq "$(wildcard /usr/share/misc/config.guess)" ""
-	cp -f /usr/share/misc/config.guess config.guess
-endif
-	./configure $(CROSS) --prefix=/usr --mandir=\$${prefix}/share/man --infodir=\$${prefix}/share/info CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
+	./configure $(CROSS) --prefix=/usr CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs"
+
+
+# ifneq "$(wildcard /usr/share/misc/config.sub)" ""
+# 	cp -f /usr/share/misc/config.sub config.sub
+# endif
+# ifneq "$(wildcard /usr/share/misc/config.guess)" ""
+# 	cp -f /usr/share/misc/config.guess config.guess
+# endif
 
 
 build: build-stamp
 
-build-stamp:  config.status 
+build-stamp: .config
 	dh_testdir
 
-	# Add here commands to compile the package.
-	$(MAKE)
+	$(MAKE) -j2
 	#docbook-to-man debian/non-sequencer.sgml > non-sequencer.1
 
 	touch $@
 
-clean: 
+clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp 
+	rm -f build-stamp
 
-	# Add here commands to clean up after the build process.
-	[ ! -f Makefile ] || $(MAKE) distclean
-	rm -f config.sub config.guess
+	[ ! -f Makefile ] || $(MAKE) clean
 
-	dh_clean 
+	dh_clean
 
 install: build
 	dh_testdir
 	dh_testroot
-	dh_prep  
+	dh_prep
 	dh_installdirs
 
 	# Add here commands to install the package into debian/non-sequencer.
-	$(MAKE) prefix=$(CURDIR)/debian/non-sequencer/usr install
+	$(MAKE) DESTDIR=$(CURDIR)/debian/non-sequencer/ install
 
 
 # Build architecture-independent files here.
@@ -74,7 +72,7 @@ binary-indep: install
 binary-arch: install
 	dh_testdir
 	dh_testroot
-	dh_installchangelogs 
+	dh_installchangelogs
 	dh_installdocs
 	dh_installexamples
 #	dh_install
@@ -102,4 +100,4 @@ binary-arch: install
 	dh_builddeb
 
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install 
+.PHONY: build clean binary-indep binary-arch binary install

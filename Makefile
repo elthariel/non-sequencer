@@ -124,6 +124,9 @@ endif
 dist:
 	git archive --prefix=non-sequencer-$(VERSION)/ v$(VERSION) | bzip2 > non-sequencer-$(VERSION).tar.bz2
 
+debian:
+	dpkg-buildpackage -rfakeroot -b
+
 TAGS: $(SRCS)
 	etags $(SRCS)
 
