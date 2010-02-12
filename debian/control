@@ -2,8 +2,8 @@ Source: non-sequencer
 Section: sound
 Priority: extra
 Maintainer: Julien Lta BALLET <elthariel@gmail.com>
-Build-Depends: debhelper (>= 7), libfltk1.1-dev, libsigc++-2.0-dev, libjack-dev, liblash-dev
-Standards-Version: 3.8.1
+Build-Depends: debhelper (>= 7), libfltk1.1-dev, libsigc++-2.0-dev, libjack-dev, liblash-dev, build-essential, libc6-dev, libasound2-dev
+Standards-Version: 3.8.3
 Homepage: http://non-sequencer.tuxfamily.org/
 
 Package: non-sequencer

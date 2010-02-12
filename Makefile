@@ -75,7 +75,7 @@ OBJS:=$(SRCS:.C=.o)
 .PHONEY: all clean install dist valgrind config dist-debian
 
 clean:
-	rm -f non-sequencer .deps $(OBJS)
+	rm -f non-sequencer .deps $(OBJS) .version.o .version.c
 	@ echo "$(DONE)"
 
 valgrind:
@@ -131,7 +131,7 @@ dist:
 	git archive --prefix=non-sequencer-$(VERSION)/ v$(VERSION) | bzip2 > non-sequencer-$(VERSION).tar.bz2
 
 dist-debian:
-	dpkg-buildpackage -rfakeroot -b
+	dpkg-buildpackage -rfakeroot -I .git
 
 TAGS: $(SRCS)
 	etags $(SRCS)

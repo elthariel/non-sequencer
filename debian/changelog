@@ -1,5 +1,18 @@
-non-sequencer (1.9.3-1) unstable; urgency=low
+non-sequencer (1.9.3-3) karmic; urgency=low
 
-  * Initial release (Closes: #nnnn)  <nnnn is the bug number of your ITP>
+  * Fixed libasound2-dev build dependancy was missing
+
+ -- Julien Lta BALLET <elthariel@gmail.com>  Thu, 11 Feb 2010 15:25:55 +0100
+
+non-sequencer (1.9.3-2) karmic; urgency=low
+
+  * Fixed a problem in the changelog, was still having a debian distribution name that was rejected on the ppa builder and wasn't properly formatted
+  * Bumping package version number
+
+ -- Julien Lta BALLET <elthariel@gmail.com>  Thu, 11 Feb 2010 15:25:55 +0100
+
+non-sequencer (1.9.3-1) karmic; urgency=low
+
+  * Initial release
 
  -- Julien Lta BALLET <elthariel@gmail.com>  Thu, 11 Feb 2010 15:25:55 +0100
