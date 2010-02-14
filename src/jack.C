@@ -75,7 +75,7 @@ typedef struct {
 } port_t;
 
 static port_t output[MAX_PORT];
-static port_t input[2];                                                /* control, performance */
+static port_t input[3];                                                /* control, performance, synchro */
 
 jack_nframes_t nframes;                                         /* for compatibility with older jack */
 
@@ -417,9 +417,6 @@ midi_init ( void )
 {
     MESSAGE( "Initializing Jack MIDI" );
 
-/*     if (( client = jack_client_new ( APP_NAME )) == 0 ) */
-/*         return 0; */
-
     if (( client = jack_client_open ( APP_NAME, (jack_options_t)0, NULL )) == 0 )
         return NULL;
 
@@ -442,6 +439,9 @@ midi_init ( void )
     input[1].port = jack_port_register( client, "midi_in", JACK_DEFAULT_MIDI_TYPE, JackPortIsInput, 0 );
     input[1].ring_buf = jack_ringbuffer_create( 128 * sizeof( midievent ) );       // why this value?
     jack_ringbuffer_reset( input[1].ring_buf );
+    input[2].port = jack_port_register( client, "clock_in", JACK_DEFAULT_MIDI_TYPE, JackPortIsInput, 0 );
+    input[2].ring_buf = jack_ringbuffer_create( 128 * sizeof( midievent ) );       // why this value?
+    jack_ringbuffer_reset( input[2].ring_buf );
 
     /* preallocate events */
     for ( int i = 32 * 16 * MAX_PORT; i-- ; )
