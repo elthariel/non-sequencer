@@ -21,12 +21,13 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <math.h>
+#include <pthread.h>
 /* jack */
 #include <jack/jack.h>
 #include <jack/midiport.h>
 #include <jack/ringbuffer.h>
 #include <jack/thread.h>
-
+/* non */
 #include "non.H"
 #include "transport.H"
 #include "pattern.H"
@@ -78,6 +79,11 @@ static port_t output[MAX_PORT];
 static port_t input[3];                                                /* control, performance, synchro */
 
 jack_nframes_t nframes;                                         /* for compatibility with older jack */
+
+
+/* A condition to wait for the first jack synchronization call */
+pthread_cond_t sync_started_cond = PTHREAD_COND_INITIALIZER;
+pthread_mutex_t sync_started_cond_mutex = PTHREAD_MUTEX_INITIALIZER;
 
 /** get next recorded event, if any--runs in UI thread */
 midievent *
@@ -213,6 +219,7 @@ stop_all_patterns ( void )
     }
 }
 
+/* Jack's transport sync callback*/
 static int
 sync ( jack_transport_state_t state, jack_position_t *pos, void * )
 {
@@ -243,10 +250,11 @@ sync ( jack_transport_state_t state, jack_position_t *pos, void * )
     return 0;
 }
 
-
+/* Jack's process callback */
 static int
 process ( jack_nframes_t nframes, void *arg )
 {
+
     static tick_t oph = 0;
     static tick_t onph = 0;
     static int old_play_mode = PATTERN;
@@ -474,15 +482,19 @@ midi_init ( void )
     else
         WARNING( "could not take over as timebase master" );
 
+    /* We need to wait until jack finally calls our timebase and
+     * process callbacks in order to be able to test for valid
+     * transport info. We need to lock before activating jack to
+     * avoid a race condition */
+    pthread_mutex_lock(&sync_started_cond_mutex);
+
     jack_activate( client );
 
-    sample_rate = jack_get_sample_rate( client );
-
-    /* FIXME: hack! we need to wait until jack finally calls our
-     * timebase and process callbacks in order to be able to test for
-     * valid transport info. */
     MESSAGE( "Waiting for JACK..." );
-    usleep( 500000 );
+    pthread_cond_wait(&sync_started_cond, &sync_started_cond_mutex);
+    pthread_mutex_unlock(&sync_started_cond_mutex);
+
+    sample_rate = jack_get_sample_rate( client );
 
     return (const char *) jack_get_client_name(client);
 }

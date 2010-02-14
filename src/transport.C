@@ -24,6 +24,7 @@
 #include <math.h>
 
 #include "transport.H"
+#include "jack.H"
 #include "common.h"
 #include "const.h"
 
@@ -48,7 +49,6 @@ static volatile bool _done;
 void
 Transport::timebase ( jack_transport_state_t, jack_nframes_t nframes, jack_position_t *pos, int new_pos, void * )
 {
-
     if ( new_pos || ! _done )
     {
         pos->valid = JackPositionBBT;
@@ -102,6 +102,7 @@ Transport::Transport ( void )
 void
 Transport::poll ( void )
 {
+    static bool catched_transport = true;
     jack_transport_state_t ts;
     jack_position_t pos;
 
@@ -157,6 +158,16 @@ Transport::poll ( void )
     tick = tick * pulses_per_tick;
 
     ticks_per_beat = PPQN;
+
+    /* Unlocking midi_init function at the first call of this callback */
+    if (catched_transport && valid)
+    {
+      pthread_mutex_lock(&sync_started_cond_mutex);
+      pthread_cond_signal(&sync_started_cond);
+      pthread_mutex_unlock(&sync_started_cond_mutex);
+      catched_transport= false;
+    }
+
 }
 
 void
