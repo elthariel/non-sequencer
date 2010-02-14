@@ -1,6 +1,6 @@
 # data file for the Fltk User Interface Designer (fluid)
-version 1.0110 
-header_name {.H} 
+version 1.0110
+header_name {.H}
 code_name {.C}
 comment {//
 // Copyright (C) 2008 Jonathan Moore Liles
@@ -20,40 +20,40 @@ comment {//
 // Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 //
 } {in_source in_header
-} 
+}
 
 decl {\#include <Fl/Fl_Dial.H>} {public
-} 
+}
 
-decl {\#include <Fl/Fl_Help_Dialog.H>} {} 
+decl {\#include <Fl/Fl_Help_Dialog.H>} {}
 
-decl {\#include <FL/Fl_Shared_Image.H>} {} 
+decl {\#include <FL/Fl_Shared_Image.H>} {}
 
-decl {\#include "widgets.H"} {} 
+decl {\#include "widgets.H"} {}
 
-decl {\#include "event_edit.H"} {} 
+decl {\#include "event_edit.H"} {}
 
-decl {\#include "../jack.H"} {} 
+decl {\#include "../jack.H"} {}
 
-decl {\#include "../lash.H"} {} 
+decl {\#include "../lash.H"} {}
 
-decl {extern const char *BUILD_ID;} {} 
+decl {extern const char *BUILD_ID;} {}
 
-decl {extern const char *VERSION;} {} 
+decl {extern const char *VERSION;} {}
 
-decl {extern UI *ui;} {} 
+decl {extern UI *ui;} {}
 
-decl {class O_Canvas;} {} 
+decl {class O_Canvas;} {}
 
 decl {class Triggers;} {public
-} 
+}
 
-decl {class Instrument_Editor;} {} 
+decl {class Instrument_Editor;} {}
 
 decl {Fl_Color canvas_background_color;} {public
-} 
+}
 
-decl {extern Fl_Color velocity_colors[];} {} 
+decl {extern Fl_Color velocity_colors[];} {}
 
 Function {update_transport( void * )} {open return_type void
 } {
@@ -65,7 +65,7 @@ lash.process();
 
 ui->progress_group->do_callback();
 
-ui->vmetro_widget->update();	
+ui->vmetro_widget->update();
 
 if ( transport.rolling )
 	ui->triggers_widget->update();
@@ -78,7 +78,7 @@ if ( transport.rolling != oldstate )
 {
 	ui->play_button->label( transport.rolling ? "@square" : "@>" );
 	oldstate = transport.rolling;
-	
+
 	if ( transport.rolling )
 	{
 		ui->menu_new->deactivate();
@@ -103,7 +103,7 @@ if ( transport.rolling )
 }
 
 ui->transport_state->do_callback();} {}
-} 
+}
 
 class UI {open
 } {
@@ -166,7 +166,7 @@ delete main_window;} {}
       callback {// Ignore escape
 if ( Fl::event() == FL_SHORTCUT && Fl::event_key() == FL_Escape )
 	return;
-	 
+
 if ( maybe_save_song() )
 	quit();} open
       xywh {209 100 865 800} type Double box PLASTIC_UP_BOX color 37 resizable xclass non size_range {600 420 0 0} visible
@@ -188,8 +188,8 @@ if ( maybe_save_song() )
 	update_pattern_widgets();
 	update_sequence_widgets();
 	update_phrase_widgets();
-	
-	
+
+
 	gui_status( "New song." );
 }}
             xywh {0 0 40 25}
@@ -204,7 +204,7 @@ if ( name )
 		fl_alert( "Could not load song!" );
 	else
 		gui_status( "Song opened." );
-	
+
 	update_sequence_widgets();
 	update_pattern_widgets();
 	update_phrase_widgets();
@@ -361,7 +361,7 @@ pattern_canvas_widget->redraw();}
             label {&Follow Playhead}
             callback {int val = o->menu()[ o->value() ].value();
 
-config.follow_playhead = val ? true : false;}
+GlobalSettings::get().follow_playhead = val ? true : false;}
             xywh {10 10 40 25} type Toggle value 1
           }
         }
@@ -426,7 +426,7 @@ if ( val > 1 )
 	playlist->remove( val - 2 );
 
 	update_sequence_widgets();
-	
+
 	if ( ! playlist_browser->value() )
 		playlist_browser->value( playlist_browser->size() );
 }}
@@ -488,7 +488,7 @@ else
 	seq_window->hide();
 	tabs->insert( (Fl_Widget&)*sequence_tab, 0 );
 	sequence_tab->resize( pattern_tab->x(), pattern_tab->y(), pattern_tab->w(), pattern_tab->h() );
-	tabs->do_callback();	
+	tabs->do_callback();
 }}
             xywh {7 740 78 26}
           }
@@ -512,7 +512,7 @@ phrase *p = phrase::phrase_by_number( playlist->playing() );
 
 if ( p )
 	phrase_progress->value( p->index() / (double)p->length() );
-	
+
 if ( playlist->length() )
 	sequence_progress->value( playlist->index() / (double)playlist->length() );} open
             xywh {10 656 233 66}
@@ -910,22 +910,22 @@ pattern_c->changed_mapping();}
 
 if ( o->value() )
 {
-	if ( config.record_mode == NEW )
+	if ( GlobalSettings::get().record_mode == NEW )
 	{
 		pattern *p = new pattern;
 		p->length( -1 );
-		
+
 		pattern_c->grid( p );
 	}
-	
+
 	((pattern*)pattern_c->grid())->record( 0 );
-	
+
 	o->labelcolor( FL_RED );
 }
 else
 {
 	pattern::recording()->record_stop();
-	
+
 	o->labelcolor( FL_WHITE );
 }}
             xywh {709 45 45 41} type Toggle shortcut 0x80072 selection_color 47 labeltype ENGRAVED_LABEL when 1
@@ -939,9 +939,9 @@ else
         Fl_Choice record_mode_menu {
           label {&Record Mode}
           callback {if ( ! transport.recording )
-	config.record_mode = (record_mode_e)o->value();
+	GlobalSettings::get().record_mode = (record_mode_e)o->value();
 else
-	o->value( config.record_mode );} open
+	o->value( GlobalSettings::get().record_mode );} open
           xywh {760 40 100 20} box PLASTIC_DOWN_BOX down_box BORDER_BOX color 37 labelsize 9 align 1
         } {
           MenuItem {} {
@@ -1117,7 +1117,7 @@ You should have received a copy of the GNU General Public License along with thi
   } {
     code {if ( ! pattern_settings_group )
 	return;
-	
+
 pattern *g = (pattern *)pattern_c->grid();
 
 pattern_number_spinner->value( g->number() );
@@ -1152,7 +1152,7 @@ else
 
 if ( ! g )
 	return;
-	
+
 phrase_number_spinner->value( g->number() );
 phrase_name_field->value( g->name() );
 phrase_solo_button->value( g->mode() == SOLO );
@@ -1169,7 +1169,7 @@ else
 	sequence_notes_buffer->text( playlist->notes() );
 else
 	sequence_notes_buffer->text( strdup( "" ) );
-	
+
 sequence_name_field->value( playlist->name() );
 
 sequence_phrase_choice->clear();
@@ -1273,8 +1273,8 @@ return 0;} {}
 
 	if ( ! fc->value() )
 		return;
-	
-	name = fc->value();	
+
+	name = fc->value();
 }
 
 if ( ! save_song( name ) )
@@ -1315,7 +1315,7 @@ help->show();
 			break;
 		case 2:
 			break;
-	}	
+	}
 }
 
 return true;} {}
@@ -1328,13 +1328,13 @@ if ( p )
 {
 
 
-	
+
 	tabs->value( pattern_tab );
-	
+
 	pattern_canvas_widget->take_focus();
-	
+
 	pattern_c->grid( p );
-	
+
 //	update_pattern_widgets();
 }} {}
   }
@@ -1346,7 +1346,7 @@ ie.set( i, n );
 
 ie.run();} {}
   }
-} 
+}
 
 Function {shortcut_handler( int e )} {return_type int
 } {
@@ -1395,7 +1395,7 @@ int processed = 0;
 		processed = 0;
 
 return processed;} {}
-} 
+}
 
 class O_Canvas {open : {public Fl_Widget}
 } {
@@ -1467,7 +1467,7 @@ if ( _c )
 
 	damage( _flags );
 	_flags = 0;
-	
+
 	/*
 	if ( damage() & FL_DAMAGE_ALL ) printf( " damage_all" );
 	if ( damage() & FL_DAMAGE_SCROLL ) printf( " damage_scroll" );
@@ -1483,14 +1483,14 @@ if ( _c )
 		_c->redraw();
 		return;
 	}
-	
+
 	if ( damage() & (FL_DAMAGE_ALL | FL_DAMAGE_USER2) )
 	{
 		draw_box( FL_FLAT_BOX, x(), y(), w(), h(), canvas_background_color );
 		_c->redraw();
 	}
-	
-	
+
+
 	if ( damage() & (FL_DAMAGE_ALL | FL_DAMAGE_SCROLL) )
 	{
 		// optimized draw
@@ -1509,7 +1509,7 @@ if ( _c )
 		_border_drawn = false;
 		draw_border();
 		_c->redraw();
-		
+
 	}
 }
 else
@@ -1561,14 +1561,14 @@ if ( this != Fl::focus() )
 	fl_color( FL_RED );
 else
 	fl_color( FL_BLACK );
-	
+
 fl_line_style( FL_DASH );
 fl_rect( x(), y(), w(), h() );
 fl_line_style( FL_SOLID );
 
 _border_drawn = true;} {}
   }
-} 
+}
 
 class Instrument_Editor {} {
   Function {Instrument_Editor()} {open return_type void
@@ -1606,7 +1606,7 @@ class Instrument_Editor {} {
         label Done
         callback {if ( _inst )
 	_inst->save();
-	
+
 window->hide();}
         xywh {255 157 76 25}
       }
@@ -1628,7 +1628,7 @@ note_field->value( n );} {}
 while ( window->shown() )
 	Fl::wait();} {}
   }
-} 
+}
 
 class Trigger {open : {public Fl_Dial}
 } {
@@ -1647,7 +1647,7 @@ switch ( m )
 			case 1:
 			{
  				pattern *p = pattern::pattern_by_number( atoi( label() ) );
-				
+
 				if ( p )
 				{
 					if ( p->mode() == MUTE )
@@ -1655,13 +1655,13 @@ switch ( m )
 					else
 						p->mode( MUTE );
 				}
-				
+
 				break;
 			}
 			case 2:
 			{
  				pattern *p = pattern::pattern_by_number( atoi( label() ) );
-				
+
 				if ( p )
 				{
 					if ( p->mode() != SOLO )
@@ -1669,7 +1669,7 @@ switch ( m )
 					else
 						p->mode( PLAY );
 				}
-				
+
 				break;
 			}
 			case 3:
@@ -1696,7 +1696,7 @@ switch ( m )
 
 return r;} {}
   }
-} 
+}
 
 widget_class Triggers {open
   xywh {335 80 1278 1003} type Double hide resizable
@@ -1717,18 +1717,18 @@ begin();
 for ( int n = 0; n < 128 ; n += 16 )
 {
 	Fl_Pack *p = new Fl_Pack( 0, 0, 25, 25 );
-	
+
 	p->type( Fl_Pack::HORIZONTAL );
-	
+
 	for ( int i = 0; i < 16; i++ )
 	{
-		
+
 		Trigger *b = new Trigger( 0, 0, bw, 50, "Num" );
-		
+
 		char pat[4];
-		
+
 		sprintf( pat, "%d", n + i + 1 );
-		
+
 		b->label( strdup( pat ) );
 		b->minimum( 0 );
 		b->maximum( 1 );
@@ -1739,12 +1739,12 @@ for ( int n = 0; n < 128 ; n += 16 )
 		b->selection_color( FL_GREEN );
 		b->color( FL_BLACK );
 		b->align( FL_ALIGN_CENTER );
-				
+
 		p->add( b );
 	}
-		
-	p->end(); 
-	
+
+	p->end();
+
 	p->resize( 0, 0, w(), bh );
 	rows->add( p );
 }
@@ -1773,15 +1773,15 @@ for ( i = 0; i < MAX_PATTERN; i++ )
 		b->value( 0 );
 		continue;
 	}
-	
+
 	pattern *p = pattern::pattern_by_number( i + 1 );
-			
+
 	if ( p->playing() )
 	{
 		b->color( fl_lighter( FL_GRAY ) );
-		
+
 		Fl_Color c = FL_BLUE;
-		
+
 		switch ( p->mode() )
 		{
 			case MUTE:
@@ -1794,16 +1794,16 @@ for ( i = 0; i < MAX_PATTERN; i++ )
 				c = FL_GREEN;
 				break;
 		}
-		
+
 		b->selection_color( c );
-		
+
 		b->value( (double)p->index() / p->length() );
 	}
 	else
 	{
 		b->value( 0 );
 	}
-		
+
 }} {}
   }
   Function {resize( int X, int Y, int W, int H )} {open return_type void
@@ -1811,7 +1811,7 @@ for ( i = 0; i < MAX_PATTERN; i++ )
     code {for ( int i = rows->children(); i--; )
 {
 	Fl_Pack *p = (Fl_Pack*) rows->child( i );
-	
+
 	for ( int j = p->children(); j--; )
 	{
 		int bw = W / p->children();
@@ -1819,10 +1819,10 @@ for ( i = 0; i < MAX_PATTERN; i++ )
 	}
 
 	p->resize( 0, 0, W, H / rows->children() );
-			
+
 	p->redraw();
 }
 
 Fl_Group::resize( X, Y, W, H );} {}
   }
-} 
+}

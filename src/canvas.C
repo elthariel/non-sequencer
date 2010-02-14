@@ -492,7 +492,7 @@ Canvas::draw_playhead ( void )
 
     if ( m.playhead < m.vp->x || m.playhead >= m.vp->x + m.vp->w )
     {
-        if ( config.follow_playhead )
+        if ( GlobalSettings::get().follow_playhead )
         {
             m.vp->x = m.playhead / m.vp->w * m.vp->w;
 

@@ -155,7 +155,7 @@ pattern::record_event ( const midievent *me )
 
     pattern::_recorded_events.append( e );
 
-    record_mode_e mode = config.record_mode;
+    record_mode_e mode = GlobalSettings::get().record_mode;
 
     if ( mode == OVERWRITE || mode == LAYER )
     {
@@ -620,7 +620,7 @@ pattern::record_stop ( void )
 
     _recording = false;
 
-    if ( config.record_mode == NEW )
+    if ( GlobalSettings::get().record_mode == NEW )
         trim();
 
     pattern::_recorded_events.clear();

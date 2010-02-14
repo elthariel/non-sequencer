@@ -37,7 +37,7 @@ Canvas *pattern_c, *phrase_c, *trigger_c;
 
 sequence *playlist;
 
-global_settings config;
+//global_settings config;
 song_settings song;
 
 Lash lash;
@@ -144,14 +144,9 @@ save_song ( const char *name )
 int
 main ( int argc, char **argv )
 {
-    config.follow_playhead = true;
-    config.record_mode = MERGE;
     song.play_mode = PATTERN;
     song.random.feel = 8;
     song.random.probability = 0.33;
-
-    asprintf( &config.user_config_dir, "%s/%s", getenv( "HOME" ), USER_CONFIG_DIR );
-    mkdir( config.user_config_dir, 0777 );
 
     printf( "%s %s %s -- %s\n", APP_TITLE, VERSION, BUILD_ID, COPYRIGHT );
 

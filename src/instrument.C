@@ -151,7 +151,7 @@ Instrument::read ( const char *s )
 
     char pat[512];
 
-    sprintf( pat, "%s%s.inst", config.user_config_dir, s );
+    sprintf( pat, "%s%s.inst", GlobalSettings::get().user_config_dir, s );
 
     if ( ! ( fp = fopen( pat, "r" ) ) )
     {
@@ -207,7 +207,7 @@ Instrument::write ( const char *s ) const
 
     char pat[512];
 
-    sprintf( pat, "%s/%s.inst", config.user_config_dir, s );
+    sprintf( pat, "%s/%s.inst", GlobalSettings::get().user_config_dir, s );
 
     if ( ! ( fp = fopen( pat, "w" ) ) )
         return false;
@@ -288,7 +288,7 @@ char **
 Instrument::listing ( void )
 {
     list <string> *sys = get_listing( SYSTEM_PATH INSTRUMENT_DIR );
-    list <string> *usr = get_listing( config.user_config_dir );
+    list <string> *usr = get_listing( GlobalSettings::get().user_config_dir );
 
     if ( ! ( usr || sys ) )
         return NULL;

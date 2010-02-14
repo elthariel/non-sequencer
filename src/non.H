@@ -23,6 +23,7 @@
 #include "pattern.H"
 #include "phrase.H"
 #include "sequence.H"
+#include "global_settings.H"
 
 enum {
   PLAY,
@@ -55,28 +56,6 @@ enum play_mode_e {
 //  PHRASE,
 };
 
-
-enum record_mode_e {
-    MERGE,
-    OVERWRITE,
-    LAYER,
-    NEW
-};
-
-
-/* program settings (from rc file) */
-struct global_settings {
-
-    enum record_mode_e record_mode;
-
-    bool record_filtered;                                       /* ignore non-note events while recording */
-    bool visual_metronome;                                      /* show visual metronome */
-    bool follow_playhead;
-
-    char *user_config_dir;
-
-};
-extern global_settings config;
 
 /* song settings (from song file) */
 struct song_settings
