@@ -29,13 +29,35 @@ using namespace sigc;
 
 typedef double playhead_t;
 
+class Transport;
+
+/* We are using the strategy pattern to allow to change the transport
+ * method dynamically */
+class iTransportStrategy
+{
+public:
+  virtual ~iTransportStrategy() {}
+
+  /* This method is used to initialize jack callback */
+  virtual void init ( Transport &t ) = 0;
+  virtual void transport_update ( Transport &t ) = 0;
+  virtual void start ( Transport &t ) = 0;
+  virtual void stop ( Transport &t ) = 0;
+  virtual void locate ( Transport &t, tick_t npos ) = 0;
+  virtual void set_beats_per_minute ( Transport &t, double n ) = 0;
+  virtual void set_beats_per_bar ( Transport &t, int n ) = 0;
+  virtual void set_beat_type ( Transport &t, int n ) = 0;
+};
+
 class Transport : public trackable {
+
+    iTransportStrategy *transport_method;
+
+public:
 
     double _master_beats_per_minute;
     unsigned _master_beats_per_bar;
     unsigned _master_beat_type;
-
-public:
 
     signal <int, double> signal_tempo_change;
     signal <int, double> signal_bpb_change;
@@ -77,8 +99,8 @@ public:
     void set_beats_per_bar ( int n );
     void set_beat_type ( int n );
 
-    static void timebase ( jack_transport_state_t state, jack_nframes_t nframes, jack_position_t *pos, int new_pos, void *arg );
-
+    /* Changes the transport method */
+    void set_transport_method( iTransportStrategy &tm );
 };
 
 extern Transport transport;

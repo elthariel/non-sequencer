@@ -81,10 +81,6 @@ static port_t input[3];                                                /* contro
 jack_nframes_t nframes;                                         /* for compatibility with older jack */
 
 
-/* A condition to wait for the first jack synchronization call */
-pthread_cond_t sync_started_cond = PTHREAD_COND_INITIALIZER;
-pthread_mutex_t sync_started_cond_mutex = PTHREAD_MUTEX_INITIALIZER;
-
 /** get next recorded event, if any--runs in UI thread */
 midievent *
 midi_input_event ( int port )
@@ -208,7 +204,7 @@ midi_all_sound_off ( void )
         }
 }
 
-static void
+void
 stop_all_patterns ( void )
 {
     for ( uint i = pattern::patterns(); i--; )
@@ -219,36 +215,6 @@ stop_all_patterns ( void )
     }
 }
 
-/* Jack's transport sync callback*/
-static int
-sync ( jack_transport_state_t state, jack_position_t *pos, void * )
-{
-    static bool seeking = false;
-
-    switch ( state )
-    {
-        case JackTransportStopped:           /* new position requested */
-            /* JACK docs lie. This is only called when the transport
-               is *really* stopped, not when starting a slow-sync
-               cycle */
-            stop_all_patterns();
-            return 1;
-        case JackTransportStarting:          /* this means JACK is polling slow-sync clients */
-        {
-            stop_all_patterns();
-            return 1;
-        }
-        case JackTransportRolling:           /* JACK's timeout has expired */
-            /* FIXME: what's the right thing to do here? */
-//            request_locate( pos->frame );
-            return 1;
-            break;
-        default:
-            WARNING( "unknown transport state" );
-    }
-
-    return 0;
-}
 
 /* Jack's process callback */
 static int
@@ -421,12 +387,15 @@ schedule:
 }
 
 const char *
-midi_init ( void )
+midi_init ( jack_client_t **c )
 {
     MESSAGE( "Initializing Jack MIDI" );
 
     if (( client = jack_client_open ( APP_NAME, (jack_options_t)0, NULL )) == 0 )
         return NULL;
+
+    // FIXME. find a better way to pass this data out, and try to avois relying on a global
+    *c = client;
 
     /* create output ports */
     for ( int i = 0; i < MAX_PORT; i++ )
@@ -468,31 +437,12 @@ midi_init ( void )
 
 //1    jack_set_buffer_size_callback( client, bufsize, 0 );
     jack_set_process_callback( client, process, 0 );
-    jack_set_sync_callback( client, sync, 0 );
 
 /*     /\* initialize buffer size *\/ */
 /*     transport_poll(); */
 /*     bufsize( jack_get_buffer_size( client ), 0 ); */
 
-    if ( jack_set_timebase_callback( client, 1, Transport::timebase, NULL ) == 0 )
-    {
-        MESSAGE( "running as timebase master" );
-        transport.master = true;
-    }
-    else
-        WARNING( "could not take over as timebase master" );
-
-    /* We need to wait until jack finally calls our timebase and
-     * process callbacks in order to be able to test for valid
-     * transport info. We need to lock before activating jack to
-     * avoid a race condition */
-    pthread_mutex_lock(&sync_started_cond_mutex);
-
     jack_activate( client );
-
-    MESSAGE( "Waiting for JACK..." );
-    pthread_cond_wait(&sync_started_cond, &sync_started_cond_mutex);
-    pthread_mutex_unlock(&sync_started_cond_mutex);
 
     sample_rate = jack_get_sample_rate( client );
 

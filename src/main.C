@@ -26,6 +26,7 @@
 #include "gui/ui.H"
 #include "jack.H"
 #include "lash.H"
+#include "transport_jack.H"
 
 #include "pattern.H"
 #include "phrase.H"
@@ -163,10 +164,14 @@ main ( int argc, char **argv )
     phrase::signal_create_destroy.connect( mem_fun( song, &song_settings::set_dirty ) );
 
     const char *jack_name;
+    jack_client_t *client;
 
-    jack_name = midi_init();
+    jack_name = midi_init( &client );
     if ( ! jack_name )
         ASSERTION( "Could not initialize MIDI system! (is Jack running and with MIDI ports enabled?)" );
+
+    TransportJack jack_transport( *client );
+    transport.set_transport_method( jack_transport );
 
     if ( ! transport.valid )
     {

@@ -1,7 +1,7 @@
 /*
-** global_settings.C
+** transport_jack.H
 ** Login : <elthariel@rincevent>
-** Started on  Sun Feb 14 15:07:58 2010 elthariel
+** Started on  Sun Feb 14 16:35:58 2010 elthariel
 ** $Id$
 **
 ** Author(s):
@@ -23,33 +23,26 @@
 ** Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
 */
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <sys/types.h>
-#include <sys/stat.h>
+#pragma once
 
-#include "global_settings.H"
+#include "transport.H"
 
-
-GlobalSettings *GlobalSettings::_instance = 0;
-
-GlobalSettings::GlobalSettings()
-  :record_mode( MERGE ),
-   transport_mode( JACK_TRANSPORT ),
-   follow_playhead( true ),
-   record_filtered( false ), //unused
-   visual_metronome( false ) //unused
+class TransportJack : public iTransportStrategy
 {
-  asprintf( &user_config_dir, "%s/%s", getenv( "HOME" ), USER_CONFIG_DIR );
-  mkdir( user_config_dir, 0777 );
-}
+public:
+  TransportJack( jack_client_t &client );
 
-GlobalSettings &
-GlobalSettings::get()
-{
-  if ( _instance )
-    return *_instance;
-  else
-    return *( _instance = new GlobalSettings );
-}
+  virtual void init ( Transport &t );
+  virtual void transport_update ( Transport &t );
+  virtual void start ( Transport &t );
+  virtual void stop ( Transport &t );
+  virtual void locate ( Transport &t, tick_t npos );
+  virtual void set_beats_per_minute ( Transport &t, double n );
+  virtual void set_beats_per_bar ( Transport &t, int n );
+  virtual void set_beat_type ( Transport &t, int n );
 
+  void timebase ( jack_transport_state_t state, jack_nframes_t nframes, jack_position_t *pos, int new_pos );
+
+protected:
+  jack_client_t         *client;
+};
