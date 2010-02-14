@@ -22,7 +22,7 @@ endif
 
 
 
-.config: configure
+.config:
 	dh_testdir
 	./configure $(CROSS) --prefix=/usr CFLAGS="$(CFLAGS)" LDFLAGS="-Wl,-z,defs" --enable-debug=no --enable-lash=yes
 
