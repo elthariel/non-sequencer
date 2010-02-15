@@ -1,6 +1,7 @@
 
 /*******************************************************************************/
 /* Copyright (C) 2007-2008 Jonathan Moore Liles                                */
+/* Copyright (C) 2010 Julien 'Lta' BALLET                                      */
 /*                                                                             */
 /* This program is free software; you can redistribute it and/or modify it     */
 /* under the terms of the GNU General Public License as published by the       */
@@ -76,7 +77,7 @@ typedef struct {
 } port_t;
 
 static port_t output[MAX_PORT];
-static port_t input[3];                                                /* control, performance, synchro */
+static port_t input[2];                                                /* control, performance */
 
 jack_nframes_t nframes;                                         /* for compatibility with older jack */
 
@@ -230,7 +231,7 @@ process ( jack_nframes_t nframes, void *arg )
     ::nframes = nframes;
 
     transport.nframes = nframes;
-    transport.poll();
+    transport.poll( nframes );
 
     /* ph-nph is exclusive. It is important that in normal continuous playback each tick is covered exactly once! */
     const tick_t ph = transport.ticks;

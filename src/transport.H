@@ -40,7 +40,7 @@ public:
 
   /* This method is used to initialize jack callback */
   virtual void init ( Transport &t ) = 0;
-  virtual void transport_update ( Transport &t ) = 0;
+  virtual void transport_update ( Transport &t, jack_nframes_t frames ) = 0;
   virtual void start ( Transport &t ) = 0;
   virtual void stop ( Transport &t ) = 0;
   virtual void locate ( Transport &t, tick_t npos ) = 0;
@@ -89,7 +89,7 @@ public:
 
     Transport ( void );
 
-    void poll ( void );
+    void poll ( jack_nframes_t frames );
     void start ( void );
     void stop ( void );
     void toggle ( void );

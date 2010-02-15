@@ -27,7 +27,7 @@ public:
   TransportJack( jack_client_t &client );
 
   virtual void init ( Transport &t );
-  virtual void transport_update ( Transport &t );
+  virtual void transport_update ( Transport &t, jack_nframes_t frames );
   virtual void start ( Transport &t );
   virtual void stop ( Transport &t );
   virtual void locate ( Transport &t, tick_t npos );

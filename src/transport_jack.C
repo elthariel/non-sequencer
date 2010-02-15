@@ -64,7 +64,7 @@ TransportJack::init ( Transport &t )
 }
 
 void
-TransportJack::transport_update ( Transport &t )
+TransportJack::transport_update ( Transport &t, jack_nframes_t frames )
 {
     static bool catched_transport = true;
     jack_transport_state_t ts;

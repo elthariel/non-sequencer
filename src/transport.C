@@ -1,6 +1,7 @@
 
 /*******************************************************************************/
 /* Copyright (C) 2008 Jonathan Moore Liles                                     */
+/* Copyright (C) 2010 Julien 'Lta' BALLET                                      */
 /*                                                                             */
 /* This program is free software; you can redistribute it and/or modify it     */
 /* under the terms of the GNU General Public License as published by the       */
@@ -40,9 +41,9 @@ Transport::Transport ( void )
 }
 
 void
-Transport::poll ( void )
+Transport::poll ( jack_nframes_t frames )
 {
-    transport_method->transport_update( *this );
+  transport_method->transport_update( *this, frames );
 }
 
 void
