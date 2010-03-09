@@ -37,6 +37,8 @@ config:
 
 SYSTEM_PATH=$(prefix)/share/non-sequencer/
 DOCUMENT_PATH=$(prefix)/share/doc/non-sequencer/
+ICON_PATH=$(prefix)/share/pixmaps
+DESKTOP_PATH=$(prefix)/share/applications
 
 # a bit of a hack to make sure this runs before any rules
 ifneq ($(CALCULATING),yes)
@@ -70,10 +72,10 @@ SRCS:=$(SRCS:.fl=.C)
 SRCS:=$(sort $(SRCS))
 OBJS:=$(SRCS:.C=.o)
 
-.PHONEY: all clean install dist valgrind config
+.PHONEY: all clean install dist valgrind config dist-debian
 
 clean:
-	rm -f non-sequencer .deps $(OBJS)
+	rm -f non-sequencer .deps $(OBJS) .version.o .version.c
 	@ echo "$(DONE)"
 
 valgrind:
@@ -114,6 +116,10 @@ install: all
 	@ install -m 644 instruments/* "$(DESTDIR)$(SYSTEM_PATH)/instruments"
 	@ install -d "$(DESTDIR)$(DOCUMENT_PATH)"
 	@ install -m 644 doc/*.html doc/*.png "$(DESTDIR)$(DOCUMENT_PATH)"
+	@ install -d "$(DESTDIR)$(ICON_PATH)"
+	@ install -m 644 ressources/desktop/non-sequencer.png "$(DESTDIR)$(ICON_PATH)"
+	@ install -d "$(DESTDIR)$(DESKTOP_PATH)"
+	@ install -m 644 ressources/desktop/non-sequencer.desktop "$(DESTDIR)$(DESKTOP_PATH)"
 	@ echo "$(DONE)"
 ifneq ($(USE_DEBUG),yes)
 	@ echo -n "Stripping..."
@@ -123,6 +129,9 @@ endif
 
 dist:
 	git archive --prefix=non-sequencer-$(VERSION)/ v$(VERSION) | bzip2 > non-sequencer-$(VERSION).tar.bz2
+
+dist-debian:
+	dpkg-buildpackage -rfakeroot -I .git
 
 TAGS: $(SRCS)
 	etags $(SRCS)
