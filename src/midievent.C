@@ -183,7 +183,7 @@ midievent::sysex::append ( byte_t *data, size_t size )
     if ( _size + size > _alloc )
         _data = (byte_t *)realloc( _data, _alloc += 256 );
 
-    memcpy( data + _size, data, size );
+    memcpy( _data + _size, data, size );
 
     _size += size;
 }
