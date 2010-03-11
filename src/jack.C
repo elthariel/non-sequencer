@@ -417,9 +417,6 @@ midi_init ( jack_client_t **c )
     input[1].port = jack_port_register( client, "midi_in", JACK_DEFAULT_MIDI_TYPE, JackPortIsInput, 0 );
     input[1].ring_buf = jack_ringbuffer_create( 128 * sizeof( midievent ) );       // why this value?
     jack_ringbuffer_reset( input[1].ring_buf );
-    input[2].port = jack_port_register( client, "clock_in", JACK_DEFAULT_MIDI_TYPE, JackPortIsInput, 0 );
-    input[2].ring_buf = jack_ringbuffer_create( 128 * sizeof( midievent ) );       // why this value?
-    jack_ringbuffer_reset( input[2].ring_buf );
 
     /* preallocate events */
     for ( int i = 32 * 16 * MAX_PORT; i-- ; )
