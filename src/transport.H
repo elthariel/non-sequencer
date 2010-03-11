@@ -101,6 +101,7 @@ public:
 
     /* Changes the transport method */
     void set_transport_method( iTransportStrategy &tm );
+    iTransportStrategy *get_transport_method ( void );
 };
 
 extern Transport transport;

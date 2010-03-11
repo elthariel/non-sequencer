@@ -33,9 +33,9 @@
 Transport transport;
 
 Transport::Transport ( void )
-  :_master_beats_per_bar ( 4 ),
+  :_master_beats_per_minute ( 120 ),
+   _master_beats_per_bar ( 4 ),
    _master_beat_type ( 4 ),
-   _master_beats_per_minute ( 120 ),
    transport_method ( 0 )
 {
 }
@@ -43,21 +43,28 @@ Transport::Transport ( void )
 void
 Transport::poll ( jack_nframes_t frames )
 {
-  transport_method->transport_update( *this, frames );
+  if ( transport_method )
+    transport_method->transport_update( *this, frames );
 }
 
 void
 Transport::start ( void )
 {
+  if ( transport_method )
+  {
     MESSAGE( "Starting transport" );
     transport_method->start(*this);
+  }
 }
 
 void
 Transport::stop ( void )
 {
+  if ( transport_method )
+  {
     MESSAGE( "Stopping transport" );
     transport_method->stop(*this);
+  }
 }
 
 void
@@ -72,13 +79,17 @@ Transport::toggle ( void )
 void
 Transport::locate ( tick_t ticks )
 {
-  MESSAGE( "Relocating transport to tick: %lu", ticks);
-  transport_method->locate(*this, ticks);
+  if ( transport_method )
+  {
+    MESSAGE( "Relocating transport to tick: %lu", ticks);
+    transport_method->locate(*this, ticks);
+  }
 }
 
 void
 Transport::set_beats_per_minute ( double n )
 {
+  if ( transport_method )
     transport_method->set_beats_per_minute( *this, n );
 }
 
@@ -88,6 +99,7 @@ Transport::set_beats_per_bar ( int n )
     if ( n < 2 )
         return;
 
+  if ( transport_method )
     transport_method->set_beats_per_bar( *this, n );
 }
 
@@ -97,6 +109,7 @@ Transport::set_beat_type ( int n )
     if ( n < 4 )
         return;
 
+  if ( transport_method )
     transport_method->set_beat_type( *this, n );
 }
 
@@ -105,4 +118,10 @@ Transport::set_transport_method( iTransportStrategy &tm )
 {
   transport_method = &tm;
   transport_method->init(*this);
+}
+
+iTransportStrategy *
+Transport::get_transport_method ( void )
+{
+  return ( transport_method );
 }
