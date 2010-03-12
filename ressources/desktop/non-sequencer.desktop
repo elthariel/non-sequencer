@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=Non Sequencer
+Comment=Realtime performance MIDI sequencer
+Exec=/usr/bin/non-sequencer
+Terminal=false
+Type=Application
+Icon=non-sequencer
+Categories=AudioVideo;Audio;
