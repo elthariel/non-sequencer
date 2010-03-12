@@ -109,7 +109,6 @@ TransportMidiClock::transport_update ( Transport &t, jack_nframes_t frames )
     tick_t new_ticks = received_ticks * ( PPQN / MIDI_CLOCK_PPQN);
 
     // Updating position
-
     t.beat--; t.bar--;
 
     t.ticks = (t.bar * t.beats_per_bar + t.beat) * PPQN + t.tick;
@@ -124,62 +123,11 @@ TransportMidiClock::transport_update ( Transport &t, jack_nframes_t frames )
 
     t.beat++; t.bar++;
 
-    // FIXME Update beat_per_minute
+    // FIXME Update these members with more precision
+    // beat_per_minute
     // tick_per_period
     // frame_per_tick
   }
-//     jack_position_t pos;
-
-//     jack_transport_query( client, &pos );
-
-//     t.valid = pos.valid & JackPositionBBT;
-
-//     t.bar = pos.bar;
-//     t.beat = pos.beat;
-//     t.tick = pos.tick;
-
-//     /* bars and beats start at 1.. */
-//     pos.bar--;
-//     pos.beat--;
-
-//     /* FIXME: these probably shouldn't be called from the RT
-//        thread... Anyway, it happens infrequently. */
-//     if ( pos.beats_per_minute != t.beats_per_minute )
-//         t.signal_tempo_change( pos.beats_per_minute );
-
-//     if ( pos.beats_per_bar != t.beats_per_bar )
-//         t.signal_bpb_change( pos.beats_per_bar );
-
-//     if ( pos.beat_type != t.beat_type )
-//         t.signal_beat_change( pos.beat_type );
-
-//     t.ticks_per_beat = pos.ticks_per_beat;
-//     t.beats_per_bar = pos.beats_per_bar;
-//     t.beat_type = pos.beat_type;
-//     t.beats_per_minute = pos.beats_per_minute;
-
-//     t.frame = pos.frame;
-//     t.frame_rate = pos.frame_rate;
-
-//     /* FIXME: this only needs to be calculated if bpm or framerate changes  */
-//     {
-//         const double frames_per_beat = t.frame_rate * 60 / t.beats_per_minute;
-
-//         t.frames_per_tick = frames_per_beat / (double)PPQN;
-//         t.ticks_per_period = t.nframes / t.frames_per_tick;
-//     }
-
-//     tick_t abs_tick = (pos.bar * pos.beats_per_bar + pos.beat) * pos.ticks_per_beat + pos.tick;
-// //    tick_t abs_tick = pos.bar_start_tick + (pos.beat * pos.ticks_per_beat) + pos.tick;
-
-//     /* scale Jack's ticks to our ticks */
-
-//     const double pulses_per_tick = PPQN / pos.ticks_per_beat;
-
-//     t.ticks = abs_tick * pulses_per_tick;
-//     t.tick = t.tick * pulses_per_tick;
-
-//     t.ticks_per_beat = PPQN;
 }
 
 void
