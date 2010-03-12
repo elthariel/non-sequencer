@@ -27,6 +27,7 @@
 #include "jack.H"
 #include "lash.H"
 #include "transport_jack.H"
+#include "transport_midi_clock.H"
 
 #include "pattern.H"
 #include "phrase.H"
@@ -170,8 +171,10 @@ main ( int argc, char **argv )
     if ( ! jack_name )
         ASSERTION( "Could not initialize MIDI system! (is Jack running and with MIDI ports enabled?)" );
 
-    TransportJack jack_transport( *client );
-    transport.set_transport_method( jack_transport );
+//    TransportJack my_transport( *client );
+    // FIXME Implement run time switch of TransportMethod
+    TransportMidiClock my_transport( *client );
+    transport.set_transport_method( my_transport );
 
     if ( ! transport.valid )
     {
